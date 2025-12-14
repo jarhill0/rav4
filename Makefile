@@ -1,5 +1,5 @@
 .PHONY: all
-all: build test
+all: build
 
 CXX=clang++
 
@@ -11,7 +11,7 @@ endif
 fqbn_path := $(subst :,.,$(fqbn))
 
 .PHONY: build
-build: BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf
+build: BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf Can/build/$(fqbn_path)/Can.ino.elf
 
 space := $() $()
 
@@ -34,10 +34,14 @@ BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.
 	arduino-cli compile --fqbn $(fqbn) BatterySpoof --export-binaries --warnings all \
 		--build-property compiler.cpp.extra_flags="$(extra_compilation_flags)"
 
+Can/build/$(fqbn_path)/Can.ino.elf: Can/Can.ino
+	arduino-cli compile --fqbn $(fqbn) Can --export-binaries --warnings all \
+		--build-property compiler.cpp.extra_flags="$(extra_compilation_flags)"
+
 .PHONY: install
 install: build
 	arduino-cli upload -p $$(arduino-cli board list | grep $(fqbn) | cut -f 1 -d ' ') \
-		--fqbn $(fqbn) BatterySpoof --build-path ./BatterySpoof/build/$(fqbn_path)
+		--fqbn $(fqbn) Can --build-path ./Can/build/$(fqbn_path)
 
 .PHONY: monitor
 monitor:
@@ -47,10 +51,12 @@ monitor:
 clean:
 	rm -rf BatterySpoof/build
 	rm -rf BatterySpoof/test/build
+	rm -rf Can/build
 
 .PHONY: format
 format:
 	find BatterySpoof/ -iname '*.ino' -o -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i
+	find Can/ -iname '*.ino' -o -iname '*.hpp' -o -iname '*.cpp' | xargs clang-format -i
 
 .PHONY: check
 check: format build test
