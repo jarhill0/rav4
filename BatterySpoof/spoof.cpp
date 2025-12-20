@@ -22,9 +22,9 @@ void init_packet() {
     HEALTHY_PACKET[i++] = 50; // high byte
   }
   for (int j = 0; j < 4; j++) {
-    // temperature: 10 Celsius
-    HEALTHY_PACKET[i++] = 16; // low byte
-    HEALTHY_PACKET[i++] = 39; // high byte
+    // temperature: 72 F (22.222 Celsius)
+    HEALTHY_PACKET[i++] = 206; // low byte
+    HEALTHY_PACKET[i++] = 86;  // high byte
   }
   HEALTHY_PACKET[i++] = 0; // padding to reach full length?
   HEALTHY_PACKET[i++] = 0;

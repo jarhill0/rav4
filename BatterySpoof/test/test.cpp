@@ -37,7 +37,7 @@ void test_healthy_packet() {
 
   for (int i = 3 + 24 * 2; i < 3 + 24 * 2 + 4 * 2; i += 2) {
     const int temperature = (packet[i + 1] << 8) + packet[i];
-    assert(10000 == temperature);
+    assert(22222 == temperature);
   }
 }
 
