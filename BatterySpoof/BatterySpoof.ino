@@ -3,19 +3,11 @@
 #include "interactive.hpp"
 #endif
 
-#if OSCILLATE_VOLTAGE
-#define OSCILLATE_PERIOD 60000 // one minute
-unsigned long t0;
-#endif
-
 void setup() {
   Serial1.begin(2400, SERIAL_8N1);
   init_packet();
 #if DEBUG_LOG || INTERACTIVE
   Serial.begin(9600);
-#endif
-#if OSCILLATE_VOLTAGE
-  t0 = millis();
 #endif
 }
 
@@ -61,14 +53,6 @@ void car_request() {
   if (sum != 0) {
     return;
   }
-
-#if OSCILLATE_VOLTAGE
-  bool osc_high = (bool)(((millis() - t0) / OSCILLATE_PERIOD) % 2);
-  set_voltage(osc_high ? 14 : 11);
-#if DEBUG_LOG
-  Serial.println(osc_high ? "voltage is high" : "voltage is low");
-#endif
-#endif
 
   unsigned char *packet;
   int packet_len = healthy_packet(&packet);
