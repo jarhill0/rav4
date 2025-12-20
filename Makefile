@@ -20,9 +20,6 @@ init:
 	arduino-cli core install $(subst $(space),:,$(wordlist 1,2,$(subst :, ,$(fqbn))))
 
 extra_compilation_flags =
-ifdef OSCILLATE_VOLTAGE
-	extra_compilation_flags += -DOSCILLATE_VOLTAGE
-endif
 ifdef DEBUG_LOG
 	extra_compilation_flags += -DDEBUG_LOG
 endif
