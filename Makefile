@@ -27,7 +27,7 @@ ifdef INTERACTIVE
 	extra_compilation_flags += -DINTERACTIVE
 endif
 
-BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.ino BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/interactive.hpp BatterySpoof/interactive.cpp
+BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.ino BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/interactive.hpp BatterySpoof/interactive.cpp BatterySpoof/gauge.hpp BatterySpoof/gauge.cpp
 	arduino-cli compile --fqbn $(fqbn) BatterySpoof --export-binaries --warnings all \
 		--build-property compiler.cpp.extra_flags="$(extra_compilation_flags)"
 
