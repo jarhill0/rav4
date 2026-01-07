@@ -1,3 +1,4 @@
+#include "can.hpp"
 #include "gauge.hpp"
 #include "spoof.hpp"
 #if INTERACTIVE
@@ -12,14 +13,15 @@ void setup() {
 #endif
 
   set_gauge_soc(0);
+  init_can();
 }
 
 void loop() {
   if (Serial1.available() >= 2) {
     car_request();
   }
-  int soc;
-  if ((soc = try_read_soc()) != -1) {
+  float soc;
+  if ((soc = read_soc()) != -1) {
     set_gauge_soc(soc);
   }
 #if INTERACTIVE
@@ -79,12 +81,6 @@ int read_serial1() {
   Serial.println(b, HEX);
 #endif
   return b;
-}
-
-// Read the state of charge, if it's available. -1 means nothing was read
-int try_read_soc() {
-  // TODO: read from CAN bus
-  return -1;
 }
 
 #if INTERACTIVE
