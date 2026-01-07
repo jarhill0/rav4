@@ -3,6 +3,6 @@
 
 #include "analogWave.h"
 
-void set_gauge_soc(int soc);
+void set_gauge_soc(float soc);
 
 #endif
