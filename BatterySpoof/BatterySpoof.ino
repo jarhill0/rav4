@@ -3,7 +3,7 @@
 
 analogWave wave(DAC);   
 
-int freq = 100;  // in hertz, change accordingly
+int freq = 1;
 
 void setup() {
   Serial.begin(115200);  
