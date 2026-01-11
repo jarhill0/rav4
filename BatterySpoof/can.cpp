@@ -22,6 +22,9 @@ void init_can() {
 // not initialized, or if there was an error condition.
 float read_soc() {
   if (!can_initialized) {
+#if DEBUG_LOG
+  Serial.println("CAN failed to initialize!");
+#endif
     return -1;
   }
   if (!CAN.available()) {
@@ -34,6 +37,9 @@ float read_soc() {
   Serial.print("Read message from CAN with ID: ");
   Serial.println(msg.id);
 #endif
+  if (msg.id != 0x6b0) {
+    return -1;
+  }
   if (msg.data_length < 5) {
     return -1;
   }
