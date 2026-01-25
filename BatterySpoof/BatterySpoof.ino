@@ -1,9 +1,8 @@
-
 #include "analogWave.h" 
 
 analogWave wave(DAC);   
 
-int freq = 1;
+int freq = 100;
 
 void setup() {
   Serial.begin(115200);  
