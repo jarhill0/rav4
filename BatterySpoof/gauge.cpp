@@ -8,7 +8,7 @@ void set_gauge_soc(float soc) {
   wave.freq(freq);
 }
 
-void init_gauge_soc() {
+void init_gauge() {
   wave.square(40);
   set_gauge_soc(0);
 }
