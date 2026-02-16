@@ -12,7 +12,7 @@ void setup() {
   Serial.begin(9600);
 #endif
 
-  set_gauge_soc(0);
+  init_gauge_soc();
   init_can();
 }
 
