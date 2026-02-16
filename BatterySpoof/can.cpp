@@ -3,10 +3,10 @@
 bool can_initialized = false;
 
 void init_can() {
-  // for (unsigned int mailbox = 0;
-  //      mailbox < R7FA4M1_CAN::CAN_MAX_NO_STANDARD_MAILBOXES; mailbox++) {
-  //   CAN.setFilterId_Standard(mailbox, 0x6b0);
-  // }
+  for (unsigned int mailbox = 0;
+       mailbox < R7FA4M1_CAN::CAN_MAX_NO_STANDARD_MAILBOXES; mailbox++) {
+    CAN.setFilterId_Standard(mailbox, 0x6b0);
+  }
 
   can_initialized = CAN.begin(CanBitRate::BR_250k);
   if (!can_initialized) {
