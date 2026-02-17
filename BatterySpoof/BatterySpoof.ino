@@ -2,9 +2,11 @@
 #include "gauge.hpp"
 #include "spoof.hpp"
 
+unsigned char HEALTHY_PACKET[PACKET_LEN];
+
 void setup() {
   Serial1.begin(2400, SERIAL_8N1);
-  init_packet();
+  init_packet(HEALTHY_PACKET);
 #if DEBUG_LOG
   Serial.begin(9600);
 #endif
@@ -55,13 +57,11 @@ void car_request() {
     return;
   }
 
-  unsigned char *packet;
-  int packet_len = healthy_packet(&packet);
-  Serial1.write(packet, packet_len);
+  Serial1.write(HEALTHY_PACKET, PACKET_LEN);
 
 #if DEBUG_LOG
   Serial.print("wrote ");
-  Serial.print(packet_len);
+  Serial.print(PACKET_LEN);
   Serial.println(" bytes");
 #endif
 }

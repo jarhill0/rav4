@@ -1,8 +1,9 @@
 #include <cassert>
-#include <cstring>
 #include <iostream>
 
 #include "../spoof.hpp"
+
+unsigned char PACKET[PACKET_LEN];
 
 void test_checksum() {
   constexpr unsigned char arr[4] = {1, 1, 2, 4};
@@ -12,85 +13,74 @@ void test_checksum() {
   assert(6 == checksum(arr, 4));
 }
 
-void test_healthy_packet() {
-  init_packet();
+void test_init_packet() {
+  init_packet(PACKET);
 
-  unsigned char *packet;
-  const int length = healthy_packet(&packet);
-
-  assert(255 == packet[0]);
-  assert(length - 2 == packet[1]);
-  assert(62 == length);
-  assert(0x31 == packet[2]);
+  assert(255 == PACKET[0]);
+  assert(PACKET_LEN - 2 == PACKET[1]);
+  assert(62 == PACKET_LEN);
+  assert(0x31 == PACKET[2]);
 
   unsigned char sum = 0;
-  for (int i = 1; i <= packet[1]; i++) {
-    sum ^= packet[i];
+  for (int i = 1; i <= PACKET[1]; i++) {
+    sum ^= PACKET[i];
   }
-  assert(packet[packet[1] + 1] == sum);
+  assert(PACKET[PACKET[1] + 1] == sum);
 
   for (int i = 3; i < 3 + 24 * 2; i += 2) {
-    const int voltage = (packet[i + 1] << 8) + packet[i];
+    const int voltage = (PACKET[i + 1] << 8) + PACKET[i];
     assert(12800 == voltage);
   }
 
   for (int i = 3 + 24 * 2; i < 3 + 24 * 2 + 4 * 2; i += 2) {
-    const int temperature = (packet[i + 1] << 8) + packet[i];
+    const int temperature = (PACKET[i + 1] << 8) + PACKET[i];
     assert(22222 == temperature);
   }
 }
 
 void test_set_voltage() {
-  init_packet();
-  set_voltage(13);
-
-  unsigned char *packet;
-  int length = healthy_packet(&packet);
+  init_packet(PACKET);
+  set_voltage(PACKET, 13);
 
   for (int i = 3; i < 3 + 24 * 2; i += 2) {
-    const int voltage = (packet[i + 1] << 8) + packet[i];
+    const int voltage = (PACKET[i + 1] << 8) + PACKET[i];
     assert(13000 == voltage);
   }
 
-  assert(0xff == checksum(packet, length));
+  assert(0xff == checksum(PACKET, PACKET_LEN));
 
-  set_voltage((float)13.456);
-
-  length = healthy_packet(&packet);
+  set_voltage(PACKET, 13.456);
 
   for (int i = 3; i < 3 + 24 * 2; i += 2) {
-    const int voltage = (packet[i + 1] << 8) + packet[i];
+    const int voltage = (PACKET[i + 1] << 8) + PACKET[i];
     assert(13456 == voltage);
   }
 
-  assert(0xff == checksum(packet, length));
+  assert(0xff == checksum(PACKET, PACKET_LEN));
 }
 
 void test_set_temperature() {
-  init_packet();
-  set_temperature(27, 0);
-  set_temperature((float)35.678, 1);
-  set_temperature((float)12.001, 2);
-  set_temperature(6, 3);
-
-  unsigned char *packet;
-  const int length = healthy_packet(&packet);
+  init_packet(PACKET);
+  set_temperature(PACKET, 27, 0);
+  set_temperature(PACKET, 35.678, 1);
+  set_temperature(PACKET, 12.001, 2);
+  set_temperature(PACKET, 6, 3);
 
   int i = 3 + 24 * 2;
-  const int temperature1 = (packet[i + 1] << 8) + packet[i];
+  const int temperature1 = (PACKET[i + 1] << 8) + PACKET[i];
   i += 2;
-  const int temperature2 = (packet[i + 1] << 8) + packet[i];
+  const int temperature2 = (PACKET[i + 1] << 8) + PACKET[i];
   i += 2;
-  const int temperature3 = (packet[i + 1] << 8) + packet[i];
+  const int temperature3 = (PACKET[i + 1] << 8) + PACKET[i];
   i += 2;
-  const int temperature4 = (packet[i + 1] << 8) + packet[i];
+  const int temperature4 = (PACKET[i + 1] << 8) + PACKET[i];
 
   assert(27000 == temperature1);
   assert(35678 == temperature2);
   assert(12001 == temperature3);
   assert(6000 == temperature4);
 
-  assert(0xff == checksum(packet, length));
+  assert(0xff == checksum(PACKET, PACKET_LEN));
 }
 
 bool contains(const char *s1, const char *s2) {
@@ -99,7 +89,7 @@ bool contains(const char *s1, const char *s2) {
 
 void run_tests() {
   test_checksum();
-  test_healthy_packet();
+  test_init_packet();
   test_set_voltage();
   test_set_temperature();
 }
