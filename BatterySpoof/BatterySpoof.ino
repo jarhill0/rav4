@@ -1,10 +1,22 @@
 #include "can.hpp"
 #include "gauge.hpp"
 #include "spoof.hpp"
+#include "time.hpp"
+
+unsigned char HEALTHY_PACKET[PACKET_LEN];
+unsigned char HIGH_VOLTAGE_PACKET[PACKET_LEN];
+
+bool high_soc = false;
+unsigned long soc_last_read;
+constexpr unsigned long SOC_VALIDITY_MILLIS = 5000;
 
 void setup() {
   Serial1.begin(2400, SERIAL_8N1);
-  init_packet();
+  init_packet(HEALTHY_PACKET);
+  init_packet(HIGH_VOLTAGE_PACKET);
+  set_voltage(HIGH_VOLTAGE_PACKET, 14.5);
+  soc_last_read = millis();
+
 #if DEBUG_LOG
   Serial.begin(9600);
 #endif
@@ -20,6 +32,8 @@ void loop() {
   float soc;
   if ((soc = read_soc()) != -1) {
     set_gauge_soc(soc);
+    high_soc = (soc >= 90.0);
+    soc_last_read = millis();
   }
 }
 
@@ -55,13 +69,18 @@ void car_request() {
     return;
   }
 
-  unsigned char *packet;
-  int packet_len = healthy_packet(&packet);
-  Serial1.write(packet, packet_len);
+  if (!soc_is_recent() || high_soc) {
+    Serial1.write(HIGH_VOLTAGE_PACKET, PACKET_LEN);
+#if DEBUG_LOG
+    Serial.println("Reporting high cell voltage");
+#endif
+  } else {
+    Serial1.write(HEALTHY_PACKET, PACKET_LEN);
+  }
 
 #if DEBUG_LOG
   Serial.print("wrote ");
-  Serial.print(packet_len);
+  Serial.print(PACKET_LEN);
   Serial.println(" bytes");
 #endif
 }
@@ -73,4 +92,15 @@ int read_serial1() {
   Serial.println(b, HEX);
 #endif
   return b;
+}
+
+bool soc_is_recent() {
+  const unsigned long now = millis();
+  const bool result = time_between(soc_last_read, now) < SOC_VALIDITY_MILLIS;
+#if DEBUG_LOG
+  if (!result) {
+    Serial.println("SoC value is not recent!")
+  }
+#endif
+  return result;
 }

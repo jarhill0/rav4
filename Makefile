@@ -24,7 +24,7 @@ ifdef DEBUG_LOG
 	extra_compilation_flags += -DDEBUG_LOG
 endif
 
-BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.ino BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/gauge.hpp BatterySpoof/gauge.cpp BatterySpoof/can.hpp BatterySpoof/can.cpp
+BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.ino BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/gauge.hpp BatterySpoof/gauge.cpp BatterySpoof/can.hpp BatterySpoof/can.cpp BatterySpoof/time.hpp BatterySpoof/time.cpp
 	arduino-cli compile --fqbn $(fqbn) BatterySpoof --export-binaries --warnings all \
 		--build-property compiler.cpp.extra_flags="$(extra_compilation_flags)"
 
@@ -55,9 +55,9 @@ test: build-test run-test
 .PHONY: build-test
 build-test: BatterySpoof/test/build/test
 
-BatterySpoof/test/build/test: BatterySpoof/test/test.cpp BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp
+BatterySpoof/test/build/test: BatterySpoof/test/test.cpp BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/time.hpp BatterySpoof/time.cpp
 	mkdir -p BatterySpoof/test/build
-	$(CXX) $(extra_compilation_flags) -o BatterySpoof/test/build/test BatterySpoof/test/test.cpp BatterySpoof/spoof.cpp
+	$(CXX) $(extra_compilation_flags) -o BatterySpoof/test/build/test BatterySpoof/test/test.cpp BatterySpoof/spoof.cpp BatterySpoof/time.cpp
 
 .PHONY: run-test
 run-test: build-test
