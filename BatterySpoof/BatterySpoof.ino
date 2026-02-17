@@ -71,6 +71,9 @@ void car_request() {
 
   if (!soc_is_recent() || high_soc) {
     Serial1.write(HIGH_VOLTAGE_PACKET, PACKET_LEN);
+#if DEBUG_LOG
+    Serial.println("Reporting high cell voltage");
+#endif
   } else {
     Serial1.write(HEALTHY_PACKET, PACKET_LEN);
   }
@@ -93,5 +96,11 @@ int read_serial1() {
 
 bool soc_is_recent() {
   const unsigned long now = millis();
-  return time_between(soc_last_read, now) < SOC_VALIDITY_MILLIS;
+  const bool result = time_between(soc_last_read, now) < SOC_VALIDITY_MILLIS;
+#if DEBUG_LOG
+  if (!result) {
+    Serial.println("SoC value is not recent!")
+  }
+#endif
+  return result;
 }
