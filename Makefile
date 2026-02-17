@@ -23,11 +23,8 @@ extra_compilation_flags =
 ifdef DEBUG_LOG
 	extra_compilation_flags += -DDEBUG_LOG
 endif
-ifdef INTERACTIVE
-	extra_compilation_flags += -DINTERACTIVE
-endif
 
-BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.ino BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/interactive.hpp BatterySpoof/interactive.cpp BatterySpoof/gauge.hpp BatterySpoof/gauge.cpp BatterySpoof/can.hpp BatterySpoof/can.cpp
+BatterySpoof/build/$(fqbn_path)/BatterySpoof.ino.elf: BatterySpoof/BatterySpoof.ino BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/gauge.hpp BatterySpoof/gauge.cpp BatterySpoof/can.hpp BatterySpoof/can.cpp
 	arduino-cli compile --fqbn $(fqbn) BatterySpoof --export-binaries --warnings all \
 		--build-property compiler.cpp.extra_flags="$(extra_compilation_flags)"
 
@@ -58,9 +55,9 @@ test: build-test run-test
 .PHONY: build-test
 build-test: BatterySpoof/test/build/test
 
-BatterySpoof/test/build/test: BatterySpoof/test/test.cpp BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp BatterySpoof/interactive.hpp BatterySpoof/interactive.cpp
+BatterySpoof/test/build/test: BatterySpoof/test/test.cpp BatterySpoof/spoof.hpp BatterySpoof/spoof.cpp
 	mkdir -p BatterySpoof/test/build
-	$(CXX) $(extra_compilation_flags) -o BatterySpoof/test/build/test BatterySpoof/test/test.cpp BatterySpoof/spoof.cpp BatterySpoof/interactive.cpp
+	$(CXX) $(extra_compilation_flags) -o BatterySpoof/test/build/test BatterySpoof/test/test.cpp BatterySpoof/spoof.cpp
 
 .PHONY: run-test
 run-test: build-test
