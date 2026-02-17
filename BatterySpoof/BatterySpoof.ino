@@ -3,10 +3,15 @@
 #include "spoof.hpp"
 
 unsigned char HEALTHY_PACKET[PACKET_LEN];
+unsigned char HIGH_VOLTAGE_PACKET[PACKET_LEN];
+
+bool high_soc = false;
 
 void setup() {
   Serial1.begin(2400, SERIAL_8N1);
   init_packet(HEALTHY_PACKET);
+  init_packet(HIGH_VOLTAGE_PACKET);
+  set_voltage(HIGH_VOLTAGE_PACKET, 14.5);
 #if DEBUG_LOG
   Serial.begin(9600);
 #endif
@@ -22,6 +27,7 @@ void loop() {
   float soc;
   if ((soc = read_soc()) != -1) {
     set_gauge_soc(soc);
+    high_soc = (soc >= 90.0);
   }
 }
 
@@ -57,7 +63,11 @@ void car_request() {
     return;
   }
 
-  Serial1.write(HEALTHY_PACKET, PACKET_LEN);
+  if (high_soc) {
+    Serial1.write(HIGH_VOLTAGE_PACKET, PACKET_LEN);
+  } else {
+    Serial1.write(HEALTHY_PACKET, PACKET_LEN);
+  }
 
 #if DEBUG_LOG
   Serial.print("wrote ");
