@@ -1,14 +1,11 @@
 #include "can.hpp"
 #include "gauge.hpp"
 #include "spoof.hpp"
-#if INTERACTIVE
-#include "interactive.hpp"
-#endif
 
 void setup() {
   Serial1.begin(2400, SERIAL_8N1);
   init_packet();
-#if DEBUG_LOG || INTERACTIVE
+#if DEBUG_LOG
   Serial.begin(9600);
 #endif
 
@@ -24,11 +21,6 @@ void loop() {
   if ((soc = read_soc()) != -1) {
     set_gauge_soc(soc);
   }
-#if INTERACTIVE
-  else if (Serial.available() != 0) {
-    interactive();
-  }
-#endif
 }
 
 void car_request() {
@@ -82,14 +74,3 @@ int read_serial1() {
 #endif
   return b;
 }
-
-#if INTERACTIVE
-void interactive() {
-  String command = Serial.readStringUntil('\n');
-  const char *response = handle_command(command.c_str());
-  if (!response[0])
-    return;
-
-  Serial.println(response);
-}
-#endif
