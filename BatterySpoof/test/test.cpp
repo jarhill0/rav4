@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "../spoof.hpp"
+#include "../time.hpp"
 
 unsigned char PACKET[PACKET_LEN];
 
@@ -83,8 +84,14 @@ void test_set_temperature() {
   assert(0xff == checksum(PACKET, PACKET_LEN));
 }
 
-bool contains(const char *s1, const char *s2) {
-  return strstr(s1, s2) != nullptr;
+void test_time_between() {
+  assert(67 == time_between(100, 167));
+
+  // sanity check that I understand constants and over/underflow
+  unsigned long almost_overflow = -5;
+  assert(almost_overflow == ULONG_MAX - 4);
+
+  assert(6767 == time_between(almost_overflow, 6762));
 }
 
 void run_tests() {
@@ -92,6 +99,7 @@ void run_tests() {
   test_init_packet();
   test_set_voltage();
   test_set_temperature();
+  test_time_between();
 }
 
 int main(int, char **) {
