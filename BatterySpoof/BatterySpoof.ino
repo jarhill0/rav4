@@ -28,12 +28,14 @@ void setup() {
 void loop() {
   if (Serial1.available() >= 2) {
     car_request();
+    return;
   }
   float soc;
   if ((soc = read_soc()) != -1) {
     set_gauge_soc(soc);
     high_soc = (soc >= 90.0);
     soc_last_read = millis();
+    return;
   }
 }
 
