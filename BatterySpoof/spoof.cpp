@@ -47,18 +47,6 @@ void set_voltage(unsigned char *packet, double v) {
   packet[PACKET_LEN - 1] = checksum(packet + 1, PACKET_LEN - 2);
 }
 
-void set_voltage(unsigned char *packet, double v, int ind) {
-  int voltage = (int)(v * 1000);
-  unsigned char low = voltage & 0xff;
-  unsigned char high = (voltage >> 8) & 0xff;
-
-  int i = 3 + 2 * ind;
-  packet[i++] = low;
-  packet[i++] = high;
-
-  packet[PACKET_LEN - 1] = checksum(packet + 1, PACKET_LEN - 2);
-}
-
 void set_temperature(unsigned char *packet, int temp, int ind) {
   set_temperature(packet, static_cast<double>(temp), ind);
 }

@@ -7,7 +7,6 @@ void init_packet(unsigned char *);
 unsigned char checksum(const unsigned char *arr, int len);
 void set_voltage(unsigned char *, int);
 void set_voltage(unsigned char *, double);
-void set_voltage(unsigned char *, double, int);
 void set_temperature(unsigned char *, int, int);
 void set_temperature(unsigned char *, double, int);
 
