@@ -14,7 +14,7 @@ void setup() {
   Serial1.begin(2400, SERIAL_8N1);
   init_packet(HEALTHY_PACKET);
   init_packet(HIGH_VOLTAGE_PACKET);
-  set_voltage(HIGH_VOLTAGE_PACKET, 14.5);
+  set_voltage(HIGH_VOLTAGE_PACKET, 16);
   soc_last_read = millis();
 
 #if DEBUG_LOG
