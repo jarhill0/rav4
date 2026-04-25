@@ -8,6 +8,7 @@ unsigned char HIGH_VOLTAGE_PACKET[PACKET_LEN];
 
 bool high_soc = false;
 unsigned long soc_last_read;
+float last_soc = 0;
 constexpr unsigned long SOC_VALIDITY_MILLIS = 5000;
 
 void setup() {
@@ -32,9 +33,12 @@ void loop() {
   }
   float soc;
   if ((soc = read_soc()) != -1) {
-    set_gauge_soc(soc);
+    if (soc != last_soc) {
+      set_gauge_soc(soc);
+    }
     high_soc = (soc >= 90.0);
     soc_last_read = millis();
+    last_soc = soc;
     return;
   }
 }
