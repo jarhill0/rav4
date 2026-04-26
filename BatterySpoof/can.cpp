@@ -28,7 +28,11 @@ float read_soc() {
     return -1;
   }
   CanMsg const msg = CAN.read();
-  // msg.id is 0x6b0, due to filtering
+  if (msg.id != 0x6b0) {
+    // I don't fully understand proper filtering. Messages other than 0x6b0 are
+    // making it through the filter.
+    return -1;
+  }
 #if DEBUG_LOG
   // TODO: verify that msg.is is always 0x6b0
   Serial.print("Read message from CAN with ID: ");
